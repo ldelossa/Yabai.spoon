@@ -12,6 +12,7 @@ obj.license = "MIT - https://opensource.org/licenses/MIT"
 obj.logger = hs.logger.new('Yabai', 'debug')
 obj.client = dofile(hs.spoons.resourcePath("client.lua"))
 obj.spaceMenuBarIcon = nil
+obj.spaceCleaner = nil
 obj.registry = {
 	onApplicationChanged = {},
 	onSpacesChanged = {},
@@ -47,7 +48,8 @@ function obj:bindHotkeys(mapping)
 end
 
 local defaultConfig = {
-	spaceMenuBarIcon = true
+	spaceMenuBarIcon = true,
+	cleanEmptySpaces = true
 }
 
 function obj:configure(configuration)
@@ -57,6 +59,11 @@ function obj:start()
 	if defaultConfig.spaceMenuBarIcon then
 		self.spaceMenuBarIcon = dofile(hs.spoons.resourcePath("spaceMenuBarIcon.lua"))
 		self.spaceMenuBarIcon:init(self)
+	end
+
+	if defaultConfig.cleanEmptySpaces then
+		self.spaceCleaner = dofile(hs.spoons.resourcePath("spaceCleaner.lua"))
+		self.spaceCleaner:init(self)
 	end
 
 	-- create our local ports for IPC from yabai
@@ -121,13 +128,13 @@ function obj:registerOnDisplaysChangedCB(func)
 	table.insert(self.registry.onDisplaysChanged, func)
 end
 
--- Prompt the user for a label via a TextPrompt and create a new workspace
--- labels it, and then focuses it.
+-- Promp the user with a TextPrompt for a label, create a new space, label it
+-- and focus it.
 function obj:createSpace()
 	self.logger.d("Creating a new space")
 
 	local button, label = hs.dialog.textPrompt("Create a new space",
-		"Provide a label for the space",
+		"Provide a label for the space.\nAn empty label will use the next available desktop number.",
 		"", "OK", "Cancel")
 
 	if (button == "Cancel") then
@@ -138,6 +145,7 @@ function obj:createSpace()
 	self.logger.df("Created new space with label: %s", label)
 end
 
+-- Prompt the user with a chooser to select a space to focus.
 function obj:selectSpace()
 	self.logger.d("Selecting a space")
 
@@ -182,11 +190,13 @@ function obj:selectSpace()
 	chooser:show()
 end
 
+-- Prompt the user with a TextPrompt for a label, label the focused space.
+-- Provide an empty labe to remove an existing one.
 function obj:labelSpace()
 	self.logger.d("Labeling a space")
 
-	local button, label = hs.dialog.textPrompt("Label workspace",
-		"Provide a label for this workspace",
+	local button, label = hs.dialog.textPrompt("Label space",
+		"Provide a label for this workspace.\nAn empty label will remove an existing label.",
 		"", "OK", "Cancel")
 
 	if (button == "Cancel") then

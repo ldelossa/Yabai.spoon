@@ -9,12 +9,18 @@ function YabaiClient:new()
 	return obj
 end
 
+-- Executes a yabai command
+-- @param domain string: The domain to execute the command in
+-- @param args string: The arguments to pass to the command
 local execYabai = function(domain, args)
 	local cmd = "yabai -m " .. domain .. " " .. args
 	local data, _, _, code = hs.execute(cmd, true)
 	return data, code
 end
 
+-- Help function which returns the focused item in the given json list
+-- @param json table: The json list to search
+-- @return table: The focused item or nil
 local _returnIfFocused = function(json)
 	for i, obj in ipairs(json) do
 		if obj['has-focus'] then return obj end
@@ -24,6 +30,7 @@ end
 
 -- Returns a liste of spaces
 -- @param focused boolean: Return only the focused space
+-- @return table: A list of spaces
 function YabaiClient:getSpaces(focused)
 	local json, code = execYabai("query", "--spaces")
 	if code ~= 0 then
@@ -41,6 +48,7 @@ end
 
 -- Returns a list of displays
 -- @param focused boolean: Return only the focused display
+-- @return table: A list of displays
 function YabaiClient:getDisplays(focused)
 	local json, code = execYabai("query", "--displays")
 	if code ~= 0 then
@@ -58,6 +66,7 @@ end
 
 -- Returns a list of windows
 -- @param focused boolean: Return only the focused window
+-- @return table: A list of windows
 function YabaiClient:getWindows(focused)
 	local json, code = execYabai("query", "--windows")
 	if code ~= 0 then
@@ -73,6 +82,8 @@ function YabaiClient:getWindows(focused)
 	return json
 end
 
+-- Focuses a space
+-- @param space table: The space to focus
 function YabaiClient:focusSpace(space)
 	log.df("Focusing space %d", space.index)
 
@@ -87,6 +98,9 @@ function YabaiClient:focusSpace(space)
 	end
 end
 
+-- Labels a space
+-- @param space table: The space to label
+-- @param label string: The label to apply
 function YabaiClient:labelSpace(space, label)
 	if not space.index then
 		log.ef("Space does not have an index")
@@ -101,6 +115,9 @@ function YabaiClient:labelSpace(space, label)
 	execYabai("space", space.index .. " --label " .. label)
 end
 
+-- Creates a new space
+-- @param label string: The label of the space
+-- @param focus boolean: Whether to focus the space after creation
 function YabaiClient:createSpace(label, focus)
 	execYabai("space", "--create")
 
@@ -128,6 +145,17 @@ function YabaiClient:createSpace(label, focus)
 	if focus then
 		self:focusSpace(space)
 	end
+end
+
+-- Destroys a space
+-- @param space table: The space to destroy
+function YabaiClient:destroySpace(space)
+	if not space.index then
+		log.ef("Space does not have an index")
+		return
+	end
+
+	execYabai("space", "--destroy " .. space.index)
 end
 
 return YabaiClient
