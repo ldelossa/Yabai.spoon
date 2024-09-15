@@ -10,11 +10,12 @@ function SpaceMenuBarIcon:new()
 end
 
 function SpaceMenuBarIcon:init(spoon)
+	log.df("SpaceMenuBarIcon:init")
 	-- keep a reference to spoon's API and Yabai client
 	self.spoon = spoon
 	self.client = spoon.client
 	-- create a menubar icon which will display the current space
-	self.menu = hs.menubar.new(true, "yabaiSpoon-space-menubar")
+	self.menu = hs.menubar.new(true, "yabaiHS:SpaceMenuBarIcon")
 	self.menu:setMenu(function() return self:onMenuPopup() end)
 
 	-- register our event handler
@@ -69,7 +70,6 @@ function SpaceMenuBarIcon:onEvent()
 		title = focusedSpace.label
 	end
 
-	print(title)
 	self.menu:setTitle(title)
 end
 

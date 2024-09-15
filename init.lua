@@ -1,3 +1,7 @@
+local SpaceMenuBaryIcon = dofile(hs.spoons.resourcePath("spaceMenuBarIcon.lua"))
+local SpaceCleaner = dofile(hs.spoons.resourcePath("spaceCleaner.lua"))
+local StackIndicator = dofile(hs.spoons.resourcePath("stackIndicator/init.lua"))
+
 local obj = {}
 obj.__index = obj
 
@@ -11,8 +15,11 @@ obj.license = "MIT - https://opensource.org/licenses/MIT"
 -- fields
 obj.logger = hs.logger.new('Yabai', 'debug')
 obj.client = dofile(hs.spoons.resourcePath("client.lua"))
+
 obj.spaceMenuBarIcon = nil
 obj.spaceCleaner = nil
+obj.stackIndicator = nil
+
 obj.registry = {
 	onApplicationChanged = {},
 	onSpacesChanged = {},
@@ -34,11 +41,8 @@ local hotKeyHandlers = {
 
 function obj:bindHotkeys(mapping)
 	if mapping then
-		-- merge into defaultHotKeysMapping, preferring the items in mapping
-		for k, _ in pairs(defaultHotKeysMapping) do
-			if mapping[k] then
-				defaultHotKeysMapping[k] = mapping[k]
-			end
+		for k, v in pairs(mapping) do
+			defaultHotKeysMapping[k] = v
 		end
 	end
 
@@ -48,22 +52,39 @@ function obj:bindHotkeys(mapping)
 end
 
 local defaultConfig = {
-	spaceMenuBarIcon = true,
-	cleanEmptySpaces = true
+	showSpaceMenuBarIcon = true,
+	cleanEmptySpaces = true,
+	showOnScreenStackIndicator = true,
+	showStackIndicatorMenuBarIcon = true
 }
 
 function obj:configure(configuration)
+	-- merge provided configuration keys if present
+	if configuration then
+		for key, value in pairs(configuration) do
+			defaultConfig[key] = value
+		end
+	end
+	print(hs.inspect(configuration))
+	print(hs.inspect(defaultConfig))
 end
 
 function obj:start()
-	if defaultConfig.spaceMenuBarIcon then
-		self.spaceMenuBarIcon = dofile(hs.spoons.resourcePath("spaceMenuBarIcon.lua"))
+	if defaultConfig.showSpaceMenuBarIcon then
+		self.spaceMenuBarIcon = SpaceMenuBaryIcon:new()
 		self.spaceMenuBarIcon:init(self)
 	end
 
 	if defaultConfig.cleanEmptySpaces then
-		self.spaceCleaner = dofile(hs.spoons.resourcePath("spaceCleaner.lua"))
+		self.spaceCleaner = SpaceCleaner:new()
 		self.spaceCleaner:init(self)
+	end
+
+	if defaultConfig.showOnScreenStackIndicator then
+		self.stackIndicator = StackIndicator:new()
+		self.stackIndicator:init(self,
+			defaultConfig.showOnScreenStackIndicator,
+			defaultConfig.showStackIndicatorMenuBarIcon)
 	end
 
 	-- create our local ports for IPC from yabai

@@ -82,6 +82,18 @@ function YabaiClient:getWindows(focused)
 	return json
 end
 
+function YabaiClient:focusWindow(window)
+	if not window.id then
+		log.ef("Window does not have an id")
+		return
+	end
+
+	local _, code = execYabai("window", "--focus " .. window.id)
+	if code ~= 0 then
+		log.ef("Failed to focus window %d. code: %d", window.id, code)
+	end
+end
+
 -- Focuses a space
 -- @param space table: The space to focus
 function YabaiClient:focusSpace(space)

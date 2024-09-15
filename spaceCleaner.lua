@@ -10,6 +10,7 @@ function SpaceCleaner:new()
 end
 
 function SpaceCleaner:init(spoon)
+	log.df("SpaceCleaner:init")
 	-- keep a reference to spoon's API and Yabai client
 	self.spoon = spoon
 	self.client = spoon.client
