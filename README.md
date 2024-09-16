@@ -19,7 +19,7 @@ Load it with defaults in your `init.lua`.
 ```lua
 local yabai = hs.loadSpoon('Yabai')
 yabai:bindHotkeys(nil)
-yabai:configure({ showSpaceMenuBarIcon = false })
+yabai:configure(nil)
 yabai:start()
 ```
 
