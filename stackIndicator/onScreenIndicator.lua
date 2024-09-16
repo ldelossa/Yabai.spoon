@@ -17,7 +17,7 @@ function OnScreenIndicator:init(client)
 	end)
 end
 
-local function rectangleElement(xOffset)
+local function rectangleElement(winID, xOffset)
 	return {
 		type = "rectangle",
 		-- light grey fill color with some transparency
@@ -28,7 +28,8 @@ local function rectangleElement(xOffset)
 			w = 20,
 			h = 5,
 		},
-		trackMouseDown = true
+		trackMouseDown = true,
+		id = winID
 	}
 end
 
@@ -40,7 +41,7 @@ function OnScreenIndicator:SetIndicator(win, winsInStack)
 		return
 	end
 
-	-- set our canvas to the height of the window
+	-- set our canvas to the width of the window
 	self.canvas:frame({
 		x = win.frame.x - 8,
 		y = win.frame.y - 6,
@@ -54,15 +55,13 @@ function OnScreenIndicator:SetIndicator(win, winsInStack)
 
 	for i, stackWin in ipairs(winsInStack) do
 		local xOffset = i * 20
-		local element = rectangleElement(xOffset)
-		element.id = stackWin.id
+		local element = rectangleElement(stackWin.id, xOffset)
 		self.canvas:insertElement(element)
 	end
 
 	-- set element at window's stack-index fillColor
 	self.canvas[win['stack-index']].fillColor = { red = 1.0, green = 1.0, blue = 1.0, alpha = 0.9 }
 
-	self.canvas:hide()
 	self.canvas:show()
 end
 
