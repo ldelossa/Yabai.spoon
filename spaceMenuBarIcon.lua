@@ -26,6 +26,7 @@ function SpaceMenuBarIcon:init(spoon)
 	self:onEvent()
 end
 
+
 function SpaceMenuBarIcon:onMenuPopup()
 	local spaces = self.client:getSpaces(false)
 
@@ -49,7 +50,7 @@ function SpaceMenuBarIcon:onMenuPopup()
 	end
 
 	table.insert(menuItems, {
-		title = "	➕	",
+		title = "➕",
 		fn = function() self.spoon:createSpace() end
 	})
 
