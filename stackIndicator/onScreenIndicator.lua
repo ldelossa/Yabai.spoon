@@ -3,6 +3,13 @@ OnScreenIndicator.__index = OnScreenIndicator
 
 local log = hs.logger.new("Indicator", 'debug')
 
+local rectangle = {
+	x = 0,
+	y = 0,
+	w = 40,
+	h = 5
+}
+
 function OnScreenIndicator:new()
 	local obj = {}
 	setmetatable(obj, self)
@@ -25,8 +32,8 @@ local function rectangleElement(winID, xOffset)
 		frame = {
 			x = xOffset,
 			y = 0,
-			w = 20,
-			h = 5,
+			w = rectangle.w,
+			h = rectangle.h,
 		},
 		trackMouseDown = true,
 		id = winID
@@ -42,8 +49,9 @@ function OnScreenIndicator:SetIndicator(win, winsInStack)
 	end
 
 	-- set our canvas to the width of the window
+	-- 8 and 6 are just padding values that look good.
 	self.canvas:frame({
-		x = win.frame.x - 8,
+		x = win.frame.x - (rectangle.w - 8),
 		y = win.frame.y - 6,
 		h = 10,
 		w = win.frame.w
@@ -54,7 +62,7 @@ function OnScreenIndicator:SetIndicator(win, winsInStack)
 	end
 
 	for i, stackWin in ipairs(winsInStack) do
-		local xOffset = i * 20
+		local xOffset = i * rectangle.w
 		local element = rectangleElement(stackWin.id, xOffset)
 		self.canvas:insertElement(element)
 	end
