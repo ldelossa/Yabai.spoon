@@ -20,9 +20,8 @@ function SpaceMenuBarIcon:init(spoon)
 
 	-- register our event handler
 	spoon:registerOnSpacesChangedCB(function() self:onEvent() end)
-	spoon:registerOnApplicationsChangedCB(function() self:onEvent() end)
 
-	-- fire initial event to click things off
+	-- fire initial event to start things off
 	self:onEvent()
 end
 

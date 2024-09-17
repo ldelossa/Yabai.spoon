@@ -258,6 +258,10 @@ function obj:labelSpace()
 	end
 
 	self.client:labelSpace(focusedSpace, label)
+
+	-- trigger space change event, Yabai does not trigger this on label change
+	self:onSpacesChanged()
+
 	self.logger.df("Labeled space with label: %s", label)
 end
 

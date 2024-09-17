@@ -3,6 +3,10 @@ MenuBarIndicator.__index = MenuBarIndicator
 
 local log = hs.logger.new("Indicator", 'debug')
 
+-- use an image cache to save a bit on battery life at the expense of a bit of
+-- memory
+local imageCache = {}
+
 function MenuBarIndicator:new()
 	local obj = {}
 	setmetatable(obj, self)
@@ -35,6 +39,19 @@ function MenuBarIndicator:SetIndicator(win, winsInStack)
 			title = title,
 			fn = function() self.client:focusWindow(window) end,
 		}
+
+		local image = imageCache[window.app]
+
+		if not image then
+			local app = hs.appfinder.appFromName(window.app)
+			if (app) then
+				image = hs.image.imageFromAppBundle(app:bundleID())
+				imageCache[window.app] = image
+			end
+		end
+
+		item.image = image
+
 		table.insert(menuItems, item)
 	end
 
