@@ -45,7 +45,8 @@ local defaultConfig = {
 local defaultHotKeysMapping = {
 	createSpace = { { "alt", "shift" }, "n" },
 	selectSpace = { { "alt" }, "w" },
-	labelSpace = { { "alt" }, "r" }
+	labelSpace = { { "alt" }, "r" },
+	toggleSpaceLayout = { { "alt" }, "o" }
 }
 ```
 

@@ -30,13 +30,15 @@ obj.registry = {
 local defaultHotKeysMapping = {
 	createSpace = { { "alt", "shift" }, "n" },
 	selectSpace = { { "alt" }, "w" },
-	labelSpace = { { "alt" }, "r" }
+	labelSpace = { { "alt" }, "r" },
+	toggleSpaceLayout = { { "alt" }, "o" }
 }
 
 local hotKeyHandlers = {
 	createSpace = function() obj:createSpace() end,
 	selectSpace = function() obj:selectSpace() end,
-	labelSpace = function() obj:labelSpace() end
+	labelSpace = function() obj:labelSpace() end,
+	toggleSpaceLayout = function() obj:toggleSpaceLayout() end
 }
 
 function obj:bindHotkeys(mapping)
@@ -257,6 +259,27 @@ function obj:labelSpace()
 
 	self.client:labelSpace(focusedSpace, label)
 	self.logger.df("Labeled space with label: %s", label)
+end
+
+function obj:toggleSpaceLayout()
+	self.logger.d("Toggling space layout")
+
+	local focusedSpace = self.client:getSpaces(true)
+
+	if focusedSpace['type'] == 'stack' then
+		self.client:setSpaceLayout(focusedSpace, 'bsp')
+	end
+
+	if focusedSpace['type'] == 'bsp' then
+		self.client:setSpaceLayout(focusedSpace, 'float')
+	end
+
+	if focusedSpace['type'] == 'float' then
+		self.client:setSpaceLayout(focusedSpace, 'stack')
+	end
+
+	-- trigger events to update our components
+	self:onSpacesChanged()
 end
 
 return obj

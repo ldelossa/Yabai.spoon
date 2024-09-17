@@ -42,7 +42,7 @@ function SpaceMenuBarIcon:onMenuPopup()
 		end
 
 		local item = {
-			title = title,
+			title = title .. " (" .. space['type'] .. ")",
 			fn = function() self.client:focusSpace(space) end
 		}
 		table.insert(menuItems, item)
@@ -70,6 +70,8 @@ function SpaceMenuBarIcon:onEvent()
 	if focusedSpace.label ~= "" then
 		title = focusedSpace.label
 	end
+
+	title = title .. " (" .. focusedSpace['type'] .. ")"
 
 	self.menu:setTitle(title)
 end

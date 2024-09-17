@@ -170,4 +170,13 @@ function YabaiClient:destroySpace(space)
 	execYabai("space", "--destroy " .. space.index)
 end
 
+function YabaiClient:setSpaceLayout(space, layout)
+	if (layout ~= "bsp" and layout ~= "float" and layout ~= "stack") then
+		log.ef("Invalid layout: %s", layout)
+		return
+	end
+
+	execYabai("space", space.index .. " --layout " .. layout)
+end
+
 return YabaiClient
