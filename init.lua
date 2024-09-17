@@ -149,27 +149,16 @@ function obj:registerOnDisplaysChangedCB(func)
 	table.insert(self.registry.onDisplaysChanged, func)
 end
 
--- Promp the user with a TextPrompt for a label, create a new space, label it
--- and focus it.
-function obj:createSpace()
-	self.logger.d("Creating a new space")
-
-	local button, label = hs.dialog.textPrompt("Create a new space",
-		"Provide a label for the space.\nAn empty label will use the next available desktop number.",
-		"", "OK", "Cancel")
-
-	if (button == "Cancel") then
-		return
-	end
-
-	self.client:createSpace(label, true)
-	self.logger.df("Created new space with label: %s", label)
-end
-
--- Prompt the user with a chooser to select a space to focus.
-function obj:selectSpace()
-	self.logger.d("Selecting a space")
-
+-- Creates a chooser which invokes `cb` on a choice.
+-- @param cb function: The callback to invoke on a choice which takes the
+-- following arguments:
+-- 										{choice}
+--
+-- The `choice` argument to the callback will have a .space member containing
+-- the selected Yabai space.
+--
+-- If `choice` is nil, the user canceled the operation or no spaces exist.
+function obj:spaceChooser(cb)
 	local spaces = self.client:getSpaces()
 	if not spaces then
 		self.logger.ef("Failed to retrieve spaces")
@@ -187,18 +176,17 @@ function obj:selectSpace()
 		if space.label ~= "" then
 			text = space.label
 		end
+
 		table.insert(choices, {
 			text = text,
 			subText = "",
 			uuid = space.id,
-			-- not part of chooser api, but you gotta love duck typing right.
 			space = space
 		})
 	end
 
 	local chooser = hs.chooser.new(function(choice)
-		if not choice then return end
-		self.client:focusSpace(choice.space)
+		cb(choice)
 	end)
 
 	local rows = #choices
@@ -209,6 +197,43 @@ function obj:selectSpace()
 	chooser:rows(rows)
 	chooser:choices(choices)
 	chooser:show()
+end
+
+function obj:simpleTextPrompt(summary, details)
+	local button, input = hs.dialog.textPrompt(summary, details, "", "OK", "Cancel")
+	if (button == "Cancel") then
+		return nil
+	end
+	return input
+end
+
+-- Promp the user with a TextPrompt for a label, create a new space, label it
+-- and focus it.
+function obj:createSpace()
+	self.logger.d("Creating a new space")
+
+	local label = self:simpleTextPrompt("Create a new space",
+		"Provide a label for the space.\nAn empty label will use the next available desktop number.")
+
+	if not label then return end
+
+	self.client:createSpace(label, true)
+	self.logger.df("Created new space with label: %s", label)
+end
+
+-- Prompt the user with a chooser to select a space to focus.
+function obj:selectSpace()
+	self.logger.d("Selecting a space")
+
+	self:spaceChooser(function(choice)
+		if not choice then
+			self.logger.df("User canceled space selection")
+			return
+		end
+
+		self.client:focusSpace(choice.space)
+		self.logger.df("Focused space with label: %s", choice.text)
+	end)
 end
 
 -- Prompt the user with a TextPrompt for a label, label the focused space.

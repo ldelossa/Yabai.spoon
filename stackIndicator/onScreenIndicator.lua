@@ -19,6 +19,7 @@ end
 function OnScreenIndicator:init(client)
 	self.client = client
 	self.canvas = hs.canvas.new({})
+	self.canvas:level('normal')
 	self.canvas:mouseCallback(function(_, _, id, x, y)
 		OnScreenIndicator.OnElementClick(self, id, x, y)
 	end)
