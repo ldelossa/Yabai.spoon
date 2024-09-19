@@ -1,7 +1,7 @@
 local OnScreenIndicator = {}
 OnScreenIndicator.__index = OnScreenIndicator
 
-local log = hs.logger.new("Indicator", 'debug')
+local log = hs.logger.new("OnScreenIndicator", 'debug')
 
 local rectangle = {
 	x = 0,
@@ -41,7 +41,7 @@ local function rectangleElement(winID, xOffset)
 end
 
 function OnScreenIndicator:SetIndicator(win, winsInStack)
-	log.d("SetIndicator", win, winsInStack)
+	log.d("SetIndicator", hs.inspect(win), hs.inspect(winsInStack))
 
 	-- if there is only a single window in the stack
 	-- we don't display ourselves
@@ -72,6 +72,7 @@ function OnScreenIndicator:SetIndicator(win, winsInStack)
 	-- set element at window's stack-index fillColor
 	self.canvas[win['stack-index']].fillColor = { red = 1.0, green = 1.0, blue = 1.0, alpha = 0.9 }
 
+	self.canvas:hide()
 	self.canvas:show()
 end
 
