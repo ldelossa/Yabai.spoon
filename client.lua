@@ -179,4 +179,12 @@ function YabaiClient:setSpaceLayout(space, layout)
 	execYabai("space", space.index .. " --layout " .. layout)
 end
 
+function YabaiClient:nextInStack()
+	execYabai("window", "--focus stack.next")
+end
+
+function YabaiClient:previousInStack()
+	execYabai("window", "--focus stack.prev")
+end
+
 return YabaiClient

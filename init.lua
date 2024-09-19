@@ -31,14 +31,18 @@ local defaultHotKeysMapping = {
 	createSpace = { { "alt", "shift" }, "n" },
 	selectSpace = { { "alt" }, "w" },
 	labelSpace = { { "alt" }, "r" },
-	toggleSpaceLayout = { { "alt" }, "o" }
+	toggleSpaceLayout = { { "alt" }, "o" },
+	nextInStack = { { "alt" }, "n" },
+	previousInStack = { { "alt" }, "p" }
 }
 
 local hotKeyHandlers = {
 	createSpace = function() obj:createSpace() end,
 	selectSpace = function() obj:selectSpace() end,
 	labelSpace = function() obj:labelSpace() end,
-	toggleSpaceLayout = function() obj:toggleSpaceLayout() end
+	toggleSpaceLayout = function() obj:toggleSpaceLayout() end,
+	nextInStack = function() obj:nextInStack() end,
+	previousInStack = function() obj:previousInStack() end
 }
 
 function obj:bindHotkeys(mapping)
@@ -284,6 +288,18 @@ function obj:toggleSpaceLayout()
 
 	-- trigger events to update our components
 	self:onSpacesChanged()
+end
+
+function obj:nextInStack()
+	self.logger.d("Next in stack")
+	self.client:nextInStack()
+	self:onWindowsChanged()
+end
+
+function obj:previousInStack()
+	self.logger.d("Previous in stack")
+	self.client:previousInStack()
+	self:onWindowsChanged()
 end
 
 return obj
