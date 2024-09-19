@@ -192,6 +192,7 @@ function obj:spaceChooser(cb)
 	local chooser = hs.chooser.new(function(choice)
 		cb(choice)
 	end)
+	chooser:enableDefaultForQuery(true)
 
 	local rows = #choices
 	if rows > 10 then
@@ -232,6 +233,12 @@ function obj:selectSpace()
 	self:spaceChooser(function(choice)
 		if not choice then
 			self.logger.df("User canceled space selection")
+			return
+		end
+
+		if not choice.space then
+			-- create space
+			self.client:createSpace(choice.text, true)
 			return
 		end
 
