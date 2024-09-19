@@ -41,6 +41,10 @@ local function _makeFrameKey(window)
 		window.frame.x, window.frame.y, window.frame.w, window.frame.h, window.space)
 end
 
+-- inventory each window and what stack it belongs to.
+-- windows belong to the same stack when they occupy the same exact frame
+-- dimensions from the WM, since the Yabai API does not provide a better way
+-- to determine this via its API.
 function StackIndicator:onEvent()
 	log.df("StackIndicator:onEvent")
 

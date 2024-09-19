@@ -71,8 +71,6 @@ function obj:configure(configuration)
 			defaultConfig[key] = value
 		end
 	end
-	print(hs.inspect(configuration))
-	print(hs.inspect(defaultConfig))
 end
 
 function obj:start()

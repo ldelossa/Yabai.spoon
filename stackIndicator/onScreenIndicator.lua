@@ -41,6 +41,8 @@ local function rectangleElement(winID, xOffset)
 end
 
 function OnScreenIndicator:SetIndicator(win, winsInStack)
+	log.d("SetIndicator", win, winsInStack)
+
 	-- if there is only a single window in the stack
 	-- we don't display ourselves
 	if #winsInStack == 1 then
