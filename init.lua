@@ -252,26 +252,25 @@ end
 function obj:labelSpace()
 	self.logger.d("Labeling a space")
 
-	local button, label = hs.dialog.textPrompt("Label space",
-		"Provide a label for this workspace.\nAn empty label will remove an existing label.",
-		"", "OK", "Cancel")
+	local chooser = hs.chooser.new(function(choice)
+		local focusedSpace = self.client:getSpaces(true)
+		if not choice then
+			return
+		end
 
-	if (button == "Cancel") then
-		return
-	end
+		if not focusedSpace then
+			obj.logger.ef("Failed to retrieve focused space")
+			return
+		end
 
-	local focusedSpace = self.client:getSpaces(true)
-	if not focusedSpace then
-		obj.logger.ef("Failed to retrieve focused space")
-		return
-	end
+		self.client:labelSpace(focusedSpace, choice.text)
+		self:onSpacesChanged()
+	end)
 
-	self.client:labelSpace(focusedSpace, label)
-
-	-- trigger space change event, Yabai does not trigger this on label change
-	self:onSpacesChanged()
-
-	self.logger.df("Labeled space with label: %s", label)
+	chooser:enableDefaultForQuery(true)
+	chooser:placeholderText("Provide a label, empty to clear")
+	chooser:rows(0)
+	chooser:show()
 end
 
 function obj:toggleSpaceLayout()

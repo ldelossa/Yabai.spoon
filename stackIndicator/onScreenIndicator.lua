@@ -41,7 +41,7 @@ local function rectangleElement(winID, xOffset)
 end
 
 function OnScreenIndicator:SetIndicator(win, winsInStack)
-	log.d("SetIndicator", hs.inspect(win), hs.inspect(winsInStack))
+	log.d("SetIndicator")
 
 	-- if there is only a single window in the stack
 	-- we don't display ourselves
