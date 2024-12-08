@@ -75,8 +75,12 @@ function StackIndicator:onEvent()
 	table.sort(frames[focusedWindowFrameKey], function(a, b) return a['stack-index'] < b['stack-index'] end)
 
 	-- compute total windows in stack, and current windows stack position.
-	self.osd:SetIndicator(focusedWindow, frames[focusedWindowFrameKey])
-	self.menuIndicator:SetIndicator(focusedWindow, frames[focusedWindowFrameKey])
+	if self.osd then
+		self.osd:SetIndicator(focusedWindow, frames[focusedWindowFrameKey])
+	end
+	if self.menuIndicator then
+		self.menuIndicator:SetIndicator(focusedWindow, frames[focusedWindowFrameKey])
+	end
 end
 
 return StackIndicator

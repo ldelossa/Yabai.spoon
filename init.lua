@@ -84,29 +84,30 @@ function obj:start()
 		self.spaceCleaner:init(self)
 	end
 
-	if defaultConfig.showOnScreenStackIndicator then
+	if defaultConfig.showOnScreenStackIndicator or defaultConfig.showStackIndicatorMenuBarIcon
+	then
 		self.stackIndicator = StackIndicator:new()
 		self.stackIndicator:init(self,
 			defaultConfig.showOnScreenStackIndicator,
 			defaultConfig.showStackIndicatorMenuBarIcon)
-	end
 
+		self.localPortAppsChanged = hs.ipc.localPort("yabaiHammerSpoon:onApplicationsChanged", function()
+			self.logger.df("Applications changed")
+			self:onApplicationsChanged()
+		end)
+		self.localPortWindowsChanged = hs.ipc.localPort("yabaiHammerSpoon:onWindowsChanged", function()
+			self.logger.df("Windows changed")
+			self:onWindowsChanged()
+		end)
+		self.localPortDisplaysChanged = hs.ipc.localPort("yabaiHammerSpoon:onDisplaysChanged", function()
+			self.logger.df("Displays changed")
+			self:onDisplaysChanged()
+		end)
+	end
 	-- create our local ports for IPC from yabai
-	self.localPortAppsChanged = hs.ipc.localPort("yabaiHammerSpoon:onApplicationsChanged", function()
-		self.logger.df("Applications changed")
-		self:onApplicationsChanged()
-	end)
 	self.localPortSpacesChanged = hs.ipc.localPort("yabaiHammerSpoon:onSpacesChanged", function()
 		self.logger.df("Spaces changed")
 		self:onSpacesChanged()
-	end)
-	self.localPortWindowsChanged = hs.ipc.localPort("yabaiHammerSpoon:onWindowsChanged", function()
-		self.logger.df("Windows changed")
-		self:onWindowsChanged()
-	end)
-	self.localPortDisplaysChanged = hs.ipc.localPort("yabaiHammerSpoon:onDisplaysChanged", function()
-		self.logger.df("Displays changed")
-		self:onDisplaysChanged()
 	end)
 end
 

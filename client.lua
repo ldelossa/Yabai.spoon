@@ -110,6 +110,20 @@ function YabaiClient:focusSpace(space)
 	end
 end
 
+-- Focuses a display
+-- @param display table: The display to focus
+function YabaiClient:focusDisplay(display)
+	if not display.index then
+		log.ef("Display does not have an index")
+		return
+	end
+
+	local _, code = execYabai("display", "--focus " .. display.index)
+	if code ~= 0 then
+		log.ef("Failed to focus display %d. code: %d", display.index, code)
+	end
+end
+
 -- Labels a space
 -- @param space table: The space to label
 -- @param label string: The label to apply
