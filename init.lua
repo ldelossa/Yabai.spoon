@@ -28,7 +28,7 @@ obj.registry = {
 }
 
 local defaultHotKeysMapping = {
-	createSpace = { { "alt", "shift" }, "n" },
+	createSpace = { { "alt", "ctrl", "shift" }, "n" },
 	selectSpace = { { "alt" }, "w" },
 	labelSpace = { { "alt" }, "r" },
 	toggleSpaceLayout = { { "alt" }, "o" },
