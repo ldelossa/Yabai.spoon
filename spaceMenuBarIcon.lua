@@ -20,6 +20,7 @@ function SpaceMenuBarIcon:init(spoon)
 
 	-- register our event handler
 	spoon:registerOnSpacesChangedCB(function() self:onEvent() end)
+	spoon:registerOnDisplaysChangedCB(function() self:onEvent() end)
 
 	-- fire initial event to start things off
 	self:onEvent()
@@ -42,7 +43,9 @@ function SpaceMenuBarIcon:onMenuPopup()
 
 		local item = {
 			title = title .. " (" .. space['type'] .. ")",
-			fn = function() self.client:focusSpace(space) end
+			fn = function()
+				self.client:focusSpace(space)
+			end
 		}
 		table.insert(menuItems, item)
 		::continue::

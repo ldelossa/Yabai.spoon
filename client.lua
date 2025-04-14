@@ -145,7 +145,13 @@ end
 -- @param label string: The label of the space
 -- @param focus boolean: Whether to focus the space after creation
 function YabaiClient:createSpace(label, focus)
-	execYabai("space", "--create")
+	local display = self:getDisplays(true)
+	if not display then
+		log.ef("Failed to retrieve focused display")
+		return
+	end
+
+	execYabai("space", "--create " .. display.index)
 
 	local spaces = self:getSpaces()
 	if not spaces then
@@ -153,12 +159,16 @@ function YabaiClient:createSpace(label, focus)
 		return
 	end
 
-	if #spaces == 0 then
-		log.ef("No spaces found after creating space")
-		return
+	-- we need to find the newest space for the given display, when more then
+	-- one display is used, you can't simply pick the newest in the list of
+	-- spaces.
+	local space = nil
+	for _, s in pairs(spaces) do
+		if s.display == display.index then
+			space = s
+		end
 	end
 
-	local space = spaces[#spaces]
 	if not space then
 		log.ef("Failed to retrieve space after creating space")
 		return

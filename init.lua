@@ -77,19 +77,6 @@ function obj:start()
 	if defaultConfig.showSpaceMenuBarIcon then
 		self.spaceMenuBarIcon = SpaceMenuBaryIcon:new()
 		self.spaceMenuBarIcon:init(self)
-	end
-
-	if defaultConfig.cleanEmptySpaces then
-		self.spaceCleaner = SpaceCleaner:new()
-		self.spaceCleaner:init(self)
-	end
-
-	if defaultConfig.showOnScreenStackIndicator or defaultConfig.showStackIndicatorMenuBarIcon
-	then
-		self.stackIndicator = StackIndicator:new()
-		self.stackIndicator:init(self,
-			defaultConfig.showOnScreenStackIndicator,
-			defaultConfig.showStackIndicatorMenuBarIcon)
 
 		self.localPortAppsChanged = hs.ipc.localPort("yabaiHammerSpoon:onApplicationsChanged", function()
 			self.logger.df("Applications changed")
@@ -104,7 +91,12 @@ function obj:start()
 			self:onDisplaysChanged()
 		end)
 	end
-	-- create our local ports for IPC from yabai
+
+	if defaultConfig.cleanEmptySpaces then
+		self.spaceCleaner = SpaceCleaner:new()
+		self.spaceCleaner:init(self)
+	end
+
 	self.localPortSpacesChanged = hs.ipc.localPort("yabaiHammerSpoon:onSpacesChanged", function()
 		self.logger.df("Spaces changed")
 		self:onSpacesChanged()
@@ -244,6 +236,7 @@ function obj:selectSpace()
 		end
 
 		self.client:focusSpace(choice.space)
+		self.spaceMenuBarIcon:onEvent()
 		self.logger.df("Focused space with label: %s", choice.text)
 	end)
 end
